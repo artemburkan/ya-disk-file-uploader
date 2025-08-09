@@ -1,0 +1,6 @@
+.screen-layout {
+  width: 100%;
+  max-width: 960px;
+  padding: var(--header-height) 16px;
+  margin: 0 auto;
+}

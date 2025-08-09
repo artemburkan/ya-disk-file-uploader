@@ -1,0 +1,1 @@
+export { YaDiskUploader } from './YaDiskUploader'

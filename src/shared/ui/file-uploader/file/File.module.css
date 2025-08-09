@@ -1,0 +1,46 @@
+.file {
+  display: flex;
+  align-items: center;
+
+  padding: 12px;
+  border: 1px solid var(--grey-1);
+  border-radius: 12px;
+  background: var(--grey-7);
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    color: var(--drop-area-icon-color);
+  }
+
+  &__description {
+    flex: 1 0 auto;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  &__name {
+  }
+
+  &__size {
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  &__control {
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    color: var(--drop-area-icon-color);
+
+    &:hover {
+      color: white;
+    }
+  }
+}

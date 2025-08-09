@@ -1,69 +1,12 @@
-# React + TypeScript + Vite
+Реализовать загрузку файла на Яндекс диск в виде SPA.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+API <https://yandex.com/dev/disk/api/reference/upload.html>
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- На форме должна быть кнопка загрузки с опцией перезаписи существующего файла. Если после отправки файла возвращается ошибка, что такой файл существует, то должно появляться сообщение с такой опцией и возможностью повторной отправки.
+- Имя файла может быть изменено на форме, т.е. отличаться от того что выбрал пользователь на диске.
+- Элементы управления должны быть разрешены к использованию если это позволяет текущее состояние (например, нельзя отправить файл если он не был выбран, или указано пустое имя файла и т.п.).
+- После выбора файла на странице должна быть информация о файле, обязательно размер. Последний должен динамически формироваться в зависимости от реального размера (т.е. kb, mb и т.п. как в файловой системе) - быть User friendly.
+- Должна быть реализована концепция SOLID в части отправки авторизованного запроса - логика применения токена должна быть отделена от логики работы с файлом (выбора и отправки).
+- После загрузки должна появляться ссылка на скачивание файла без дополнительных действий или запросов.
+- Добавить обработку всех ошибок в соответствии описанию API.
+- Реализацию сделать в репозитории GitHub.
