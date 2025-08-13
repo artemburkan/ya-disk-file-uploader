@@ -1,8 +1,8 @@
 .file {
+  height: 62px;
   display: flex;
-  align-items: center;
+  align-items: stretch;
 
-  padding: 12px;
   border: 1px solid var(--grey-1);
   border-radius: 12px;
   background: var(--grey-7);
@@ -13,23 +13,31 @@
     color: var(--drop-area-icon-color);
   }
 
+  &__load {
+    display: flex;
+    justify-content: center;
+    align-self: stretch;
+    align-items: center;
+    width: 58px;
+    padding: 12px;
+    border-right: 1px solid var(--grey-1);
+  }
+
   &__description {
     flex: 1 0 auto;
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-
-  &__name {
-  }
-
-  &__size {
+    align-self: center;
+    padding: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   &__controls {
     display: flex;
     align-items: center;
-    padding: 8px;
-    gap: 8px;
+    padding: 12px;
+    gap: 12px;
+
+    border-left: 1px solid var(--grey-1);
   }
 
   &__control {
@@ -39,8 +47,34 @@
     align-items: center;
     color: var(--drop-area-icon-color);
 
+    transition: color 0.1s;
+
     &:hover {
+      border-color: white;
       color: white;
     }
+  }
+
+  &__input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid var(--grey-1);
+    border-radius: 8px;
+    background: var(--grey-7);
+    color: var(--drop-area-icon-color);
+    font-size: 16px;
+    outline: none;
+    color: white;
+    transition: border-color 0.1s;
+
+    &:focus {
+      border-color: white;
+    }
+  }
+
+  &__uploaded {
+    display: flex;
+    align-items: center;
+    color: var(--drop-area-icon-color);
   }
 }

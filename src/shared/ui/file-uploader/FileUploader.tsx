@@ -1,29 +1,25 @@
 import { useRef, useState } from 'react'
 import { IoCloudUpload } from 'react-icons/io5'
-// import { Item } from './item'
 import { File } from './file'
+import type { UploadStatus } from './file'
+import type { FileInfo } from './file'
 import style from './FileUploader.module.css'
 
+export interface UploadFileProcess {
+  uploading: (process: number) => void
+  uploaded: () => void
+}
+
 interface Props {
-  message?: string
-  onUpload?: () => void
+  description?: string
+  onUpload?: (fileInfo: FileInfo, process?: UploadFileProcess) => void
+  onDownload?: () => void
 }
-
-type FileStatus = 'unuploaded' | 'uploading' | 'uploaded'
-
-interface FileValue {
-  name: string
-  size: string
-  value: File
-  status: FileStatus
-}
-
-type Files = FileValue[]
 
 export const FileUploader = (props: Props) => {
-  const { message, onUpload } = props
+  const { description, onUpload = () => {}, onDownload = () => {} } = props
 
-  const [files, setFiles] = useState<Files>([])
+  const [files, setFiles] = useState<FileInfo[]>([])
   const formRef = useRef<HTMLFormElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -32,50 +28,82 @@ export const FileUploader = (props: Props) => {
   }
 
   const change = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = event.target.files
+    const newFiles = event.target.files
 
-    if (!fileList) return
+    if (!newFiles) return
 
-    const addedFiles = Array.from(fileList).map((file) => {
-      const name =
-        file.name.length > 32
-          ? file.name.slice(0, 12) + '...' + file.name.slice(-12)
-          : file.name
-      const size = `${(file.size / (1024 * 1024)).toFixed(2)} MB`
-      const status: FileStatus = 'unuploaded'
+    const addedFiles = Array.from(newFiles).map((file, index) => ({
+      id: files.length + index,
+      value: file,
+      uploadStatus: 'unuploaded' as UploadStatus,
+      progress: 0,
+      name: `${file.name.split('.')[0]}`,
+      extension: `.${file.name.split('.')[1]}`,
+      isEdit: false,
+    }))
 
-      return {
-        name,
-        size,
-        value: file,
-        status,
-      }
-    })
-
+    formRef.current?.reset()
     setFiles([...files, ...addedFiles])
   }
 
-  const deleteFile = (index: number) => {
-    files.splice(index, 1)
-    const newFiles = [...files]
-    setFiles(newFiles)
+  const uploadFile = (file: FileInfo) => {
+    const index = files.findIndex((_) => _.id === file.id)
+    files[index].uploadStatus = 'uploading'
+    setFiles([...files])
+
+    onUpload(file, {
+      uploading: (progress: number) => {
+        files[index].progress = progress
+        setFiles([...files])
+      },
+      uploaded: () => {
+        files[index].uploadStatus = 'uploaded'
+        setFiles([...files])
+      },
+    })
+  }
+
+  const editFile = (file: FileInfo) => {
+    const index = files.findIndex((_) => _.id === file.id)
+    files[index].isEdit = !file.isEdit
+    files[index].name = `${file.name}`
+
+    setFiles([...files])
+  }
+
+  const deleteFile = (file: FileInfo) => {
+    const restFiles = files.filter((_) => _.id !== file.id)
+    setFiles(restFiles)
   }
 
   return (
     <form ref={formRef} className={style['file-uploader']}>
       <div className={style['file-uploader__drop-area']} onClick={click}>
-        <input ref={inputRef} type="file" multiple hidden onChange={change} />
+        <input
+          ref={inputRef}
+          name="uploadFile"
+          type="file"
+          multiple
+          hidden
+          onChange={change}
+        />
         <IoCloudUpload size={64} className={style['file-uploader__icon']} />
-        {message}
+        {description}
       </div>
-      {files &&
-        files.map((file, index) => (
+      {Boolean(files.length) &&
+        files.map((file) => (
           <File
-            key={index}
-            name={file.name}
-            size={file.size}
+            key={file.id}
             value={file.value}
-            onDelete={() => deleteFile(index)}
+            name={file.name}
+            extension={file.extension}
+            uploadStatus={file.uploadStatus}
+            progress={file.progress}
+            isEdit={file.isEdit}
+            onEdit={(name: string) => editFile({ ...file, name })}
+            onDelete={() => deleteFile(file)}
+            onUpload={() => uploadFile(file)}
+            onDownload={() => onDownload()}
           />
         ))}
     </form>

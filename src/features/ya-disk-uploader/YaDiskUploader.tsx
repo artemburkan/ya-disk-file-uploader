@@ -1,10 +1,26 @@
-import { useCallback } from 'react'
+import { useCallback, memo } from 'react'
 import { FileUploader } from '@shared/ui/file-uploader'
+import type { FileInfo, UploadFileProcess } from '@shared/ui/file-uploader'
+import { yaDiskService } from './services/YaDiskService'
 
-const MESSAGE = 'Выберите для загрузки на Яндекс.Диск'
+const description = 'Выберите для загрузки на Яндекс.Диск'
+
+const FileUploaderWithMemo = memo(FileUploader)
 
 export const YaDiskUploader = () => {
-  const upload = useCallback(() => {}, [])
+  const upload = useCallback((file: FileInfo, process?: UploadFileProcess) => {
+    yaDiskService.uploadFile(file, process)
+  }, [])
 
-  return <FileUploader message={MESSAGE} onUpload={upload} />
+  const download = useCallback(() => {
+    // yaDiskService.downloadFile()
+  }, [])
+
+  return (
+    <FileUploaderWithMemo
+      description={description}
+      onUpload={upload}
+      onDownload={download}
+    />
+  )
 }

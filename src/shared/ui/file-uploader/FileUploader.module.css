@@ -7,7 +7,7 @@
   --drop-area-icon-color: var(--grey-0);
 
   overflow: hidden;
-  max-width: 680px;
+  max-width: 620px;
   width: 100%;
   padding: 16px;
   border: 1px solid var(--file-uploader-border);
@@ -30,10 +30,11 @@
 
   &__drop-area {
     cursor: pointer;
-    padding: 24px;
+    padding: 32px;
     border: 2px dashed var(--drop-area);
     border-radius: 8px;
     text-align: center;
+    transition: border-color 0.1s;
 
     &:hover {
       border: 2px dashed white;
