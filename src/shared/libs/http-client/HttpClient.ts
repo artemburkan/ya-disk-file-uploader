@@ -6,6 +6,7 @@ import type {
   Method,
   AxiosProgressEvent,
 } from 'axios'
+import { HttpClientError } from './HttpClientError'
 
 export type HttpClientConfig = AxiosRequestConfig
 export type HttpMethod = Method
@@ -19,33 +20,68 @@ export class HttpClient {
     this.instance = axios.create(config)
   }
 
-  get<T = unknown>(
-    url: string,
-    config?: HttpClientConfig
-  ): Promise<HttpResponse<T>> {
-    return this.instance.get<T>(url, config)
+  private throwError(error: unknown): never {
+    const httpClientError = new HttpClientError()
+
+    if (axios.isAxiosError(error)) {
+      httpClientError.code = error.code ?? ''
+      httpClientError.name = error.response?.data?.error
+      httpClientError.message = error.response?.data?.message
+      httpClientError.description = error.response?.data?.description
+    } else {
+      httpClientError.code = 'UNKNOWN_ERROR'
+      httpClientError.name = 'UnknownError'
+      httpClientError.message = 'Неизвестная ошибка'
+      httpClientError.description = 'Unknown error'
+    }
+
+    throw httpClientError
   }
 
-  post<T = unknown>(
+  async get<T = unknown>(url: string, config?: HttpClientConfig): Promise<T> {
+    try {
+      const response = await this.instance.get<T>(url, config)
+      return response.data
+    } catch (error) {
+      this.throwError(error)
+    }
+  }
+
+  async post<T = unknown>(
     url: string,
     data?: unknown,
     config?: HttpClientConfig
-  ): Promise<HttpResponse<T>> {
-    return this.instance.post<T>(url, data, config)
+  ): Promise<T> {
+    try {
+      const response = await this.instance.post<T>(url, data, config)
+      return response.data
+    } catch (error) {
+      this.throwError(error)
+    }
   }
 
-  put<T = unknown>(
+  async put<T = unknown>(
     url: string,
     data?: unknown,
     config?: HttpClientConfig
-  ): Promise<HttpResponse<T>> {
-    return this.instance.put<T>(url, data, config)
+  ): Promise<T> {
+    try {
+      const response = await this.instance.put<T>(url, data, config)
+      return response.data
+    } catch (error) {
+      this.throwError(error)
+    }
   }
 
-  delete<T = unknown>(
+  async delete<T = unknown>(
     url: string,
     config?: HttpClientConfig
-  ): Promise<HttpResponse<T>> {
-    return this.instance.delete<T>(url, config)
+  ): Promise<T> {
+    try {
+      const response = await this.instance.delete<T>(url, config)
+      return response.data
+    } catch (error) {
+      this.throwError(error)
+    }
   }
 }

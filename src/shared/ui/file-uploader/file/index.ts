@@ -1,3 +1,2 @@
 export { File } from './File'
-export type { UploadStatus } from './File'
-export type { FileInfo } from './File'
+export type { UploadFileStatus, FileInfo } from '../types'

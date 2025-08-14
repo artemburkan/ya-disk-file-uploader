@@ -1,4 +1,6 @@
 .file {
+  --error-border: var(--red-0);
+
   height: 62px;
   display: flex;
   align-items: stretch;
@@ -6,6 +8,13 @@
   border: 1px solid var(--grey-1);
   border-radius: 12px;
   background: var(--grey-7);
+
+  &_message {
+    border-bottom: none;
+    border-bottom-color: var(--grey-1);
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
 
   &__icon {
     display: flex;
@@ -76,5 +85,25 @@
     display: flex;
     align-items: center;
     color: var(--drop-area-icon-color);
+  }
+}
+
+.file-message {
+  --error-border: var(--red-0);
+
+  padding: 8px;
+  padding-left: 16px;
+  padding-right: 16px;
+  border: 1px solid var(--grey-1);
+
+  border-radius: 12px;
+  background: var(--grey-7);
+
+  border-color: var(--grey-1);
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+
+  &_error {
+    border-color: var(--error-border);
   }
 }

@@ -1,14 +1,13 @@
 import { useRef, useState } from 'react'
 import { IoCloudUpload } from 'react-icons/io5'
 import { File } from './file'
-import type { UploadStatus } from './file'
-import type { FileInfo } from './file'
+import type {
+  FileInfo,
+  FileError,
+  UploadFileStatus,
+  UploadFileProcess,
+} from './types'
 import style from './FileUploader.module.css'
-
-export interface UploadFileProcess {
-  uploading: (process: number) => void
-  uploaded: () => void
-}
 
 interface Props {
   description?: string
@@ -35,10 +34,10 @@ export const FileUploader = (props: Props) => {
     const addedFiles = Array.from(newFiles).map((file, index) => ({
       id: files.length + index,
       value: file,
-      uploadStatus: 'unuploaded' as UploadStatus,
+      uploadStatus: 'ready' as UploadFileStatus,
       progress: 0,
-      name: `${file.name.split('.')[0]}`,
-      extension: `.${file.name.split('.')[1]}`,
+      name: file.name,
+      message: '',
       isEdit: false,
     }))
 
@@ -49,15 +48,17 @@ export const FileUploader = (props: Props) => {
   const uploadFile = (file: FileInfo) => {
     const index = files.findIndex((_) => _.id === file.id)
     files[index].uploadStatus = 'uploading'
+    files[index].message = ''
     setFiles([...files])
 
     onUpload(file, {
-      uploading: (progress: number) => {
+      progress: (progress: number) => {
         files[index].progress = progress
         setFiles([...files])
       },
-      uploaded: () => {
-        files[index].uploadStatus = 'uploaded'
+      finish: (error?: FileError) => {
+        files[index].uploadStatus = error ? 'error' : 'success'
+        files[index].message = error?.message ?? ''
         setFiles([...files])
       },
     })
@@ -96,9 +97,9 @@ export const FileUploader = (props: Props) => {
             key={file.id}
             value={file.value}
             name={file.name}
-            extension={file.extension}
             uploadStatus={file.uploadStatus}
             progress={file.progress}
+            message={file.message}
             isEdit={file.isEdit}
             onEdit={(name: string) => editFile({ ...file, name })}
             onDelete={() => deleteFile(file)}

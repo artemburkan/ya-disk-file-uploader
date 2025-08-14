@@ -7,26 +7,17 @@ import {
   MdCheck,
 } from 'react-icons/md'
 import { MdDelete } from 'react-icons/md'
+import cx from 'clsx'
+import type { UploadFileStatus } from '../types'
 import style from './File.module.css'
-
-export type UploadStatus = 'unuploaded' | 'uploading' | 'uploaded'
-export interface FileInfo {
-  id: number
-  value: File
-  name: string
-  extension: string
-  isEdit: boolean
-  uploadStatus: UploadStatus
-  progress: number
-}
 
 interface Props {
   value: File
   name?: string
-  extension?: string
-  uploadStatus?: string
-  isEdit?: boolean
+  uploadStatus?: UploadFileStatus
   progress?: number
+  message?: string
+  isEdit?: boolean
   onEdit?: (name: string) => void
   onDelete?: () => void
   onUpload?: (file: File) => void
@@ -37,8 +28,8 @@ export const File = (props: Props) => {
   const {
     value: file,
     name = '',
-    extension = '',
     uploadStatus,
+    message = '',
     isEdit,
     progress,
     onEdit = () => {},
@@ -50,16 +41,21 @@ export const File = (props: Props) => {
   const [editedName, setEditedName] = useState('')
 
   const formatedName =
-    name.length > 32
-      ? `${name.slice(0, 32)}...${name.slice(-8)}${extension}`
-      : `${name}${extension}`
+    name.length > 32 ? `${name.slice(0, 32)}...${name.slice(-8)}` : `${name}`
   const size = `${(file.size / (1024 * 1024)).toFixed(2)} MB`
 
   const editFile = () => {
     if (editedName) {
-      onEdit(editedName)
+      setEditedName('')
+      onEdit(`${editedName}.${file.name.split('.')[1]}`)
     } else {
-      onEdit(name)
+      console.log('else edit: name: ', name)
+      const nameChunks = name.split('.')
+      nameChunks.pop()
+      const editedName = nameChunks.join('.')
+      console.log('nameChunks: ', nameChunks)
+      setEditedName(editedName)
+      onEdit(editedName)
     }
   }
 
@@ -80,69 +76,84 @@ export const File = (props: Props) => {
   const deleteFile = () => onDelete()
 
   return (
-    <div className={style['file']}>
-      <div className={style['file__load']}>
-        {uploadStatus === 'unuploaded' && (
-          <MdFileUpload
-            size={32}
-            className={style['file__control']}
-            onClick={uploadFile}
-          />
-        )}
-        {uploadStatus === 'uploading' && `${progress ?? 0}%`}
-        {uploadStatus === 'uploaded' && (
-          <MdCheckCircle size={32} className={style['file__uploaded']} />
-        )}
-      </div>
-      <div className={style['file__description']}>
-        {isEdit && (
-          <input
-            type="text"
-            name="fileName"
-            defaultValue={name}
-            onChange={renameFile}
-            className={style['file__input']}
-          />
-        )}
-        {!isEdit && (
-          <>
-            <div>{formatedName}</div>
-            <div>{size}</div>
-          </>
-        )}
-      </div>
-      {uploadStatus !== 'uploading' && (
-        <div className={style['file__controls']}>
-          {uploadStatus === 'unuploaded' && (
-            <>
-              {!isEdit && (
-                <MdEdit
-                  size={22}
-                  className={style['file__control']}
-                  onClick={editFile}
-                />
-              )}
-              {isEdit && (
-                <MdCheck
-                  size={22}
-                  className={style['file__control']}
-                  onClick={editFile}
-                />
-              )}
-              <MdDelete
-                size={24}
-                className={style['file__control']}
-                onClick={deleteFile}
-              />
-            </>
-          )}
-          {uploadStatus === 'uploaded' && (
-            <MdFileDownload
-              size={26}
+    <div>
+      <div
+        className={cx(style['file'], {
+          [style['file_message']]: Boolean(message),
+        })}
+      >
+        <div className={style['file__load']}>
+          {(uploadStatus === 'ready' || uploadStatus === 'error') && (
+            <MdFileUpload
+              size={32}
               className={style['file__control']}
-              onClick={downloadFile}
+              onClick={uploadFile}
             />
           )}
+          {uploadStatus === 'uploading' && `${progress ?? 0}%`}
+          {uploadStatus === 'success' && (
+            <MdCheckCircle size={32} className={style['file__uploaded']} />
+          )}
+        </div>
+        <div className={style['file__description']}>
+          {isEdit && (
+            <input
+              type="text"
+              name="fileName"
+              defaultValue={name}
+              onChange={renameFile}
+              className={style['file__input']}
+            />
+          )}
+          {!isEdit && (
+            <>
+              <div>{formatedName}</div>
+              <div>{size}</div>
+            </>
+          )}
+        </div>
+        {uploadStatus !== 'uploading' && (
+          <div className={style['file__controls']}>
+            {(uploadStatus === 'ready' || uploadStatus === 'error') && (
+              <>
+                {!isEdit && (
+                  <MdEdit
+                    size={22}
+                    className={style['file__control']}
+                    onClick={editFile}
+                  />
+                )}
+                {isEdit && (
+                  <MdCheck
+                    size={22}
+                    className={style['file__control']}
+                    onClick={editFile}
+                  />
+                )}
+                <MdDelete
+                  size={24}
+                  className={style['file__control']}
+                  onClick={deleteFile}
+                />
+              </>
+            )}
+            {uploadStatus === 'success' && (
+              <MdFileDownload
+                size={26}
+                className={style['file__control']}
+                onClick={downloadFile}
+              />
+            )}
+          </div>
+        )}
+      </div>
+      {Boolean(message) && (
+        <div
+          className={cx(style['file-message'], {
+            [style['file-message_error']]: uploadStatus === 'error',
+          })}
+        >
+          {message}
         </div>
       )}
     </div>

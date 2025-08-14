@@ -1,10 +1,13 @@
-import { HttpClient } from '@shared/libs'
+import { HttpClient, HttpClientError } from '@shared/libs'
 import type { HttpUploadProgressEvent } from '@shared/libs'
 import type { UploadingResponse } from './types'
 import type { FileInfo, UploadFileProcess } from '@shared/ui/file-uploader'
 
 export class YaDiskService {
+  baseDiskPath = 'disk:/'
+
   httpClient = new HttpClient({
+    baseURL: 'https://cloud-api.yandex.net/v1/disk',
     timeout: 300000,
     headers: {
       'Content-Type': 'application/json',
@@ -12,39 +15,37 @@ export class YaDiskService {
   })
 
   // 1. Получить URL для загрузки файла
-  private async getUploadUrl(path: string): Promise<string> {
+  private async getUploadUrl(path: string): Promise<UploadingResponse> {
+    const url = '/resources/upload'
     const token = localStorage.getItem('token')
-    const response = await this.httpClient.get<UploadingResponse>(
-      'https://cloud-api.yandex.net/v1/disk/resources/upload',
-      {
-        params: { path, overwrite: true },
-        headers: {
-          Authorization: `OAuth ${token}`,
-        },
-      }
-    )
+    const config = {
+      params: { path, overwrite: true },
+      headers: { Authorization: `OAuth ${token}` },
+    }
 
-    return response.data.href
+    return await this.httpClient.get<UploadingResponse>(url, config)
   }
 
   // 2. Загрузить файл по полученному URL
   async uploadFile(file: FileInfo, process?: UploadFileProcess): Promise<void> {
-    const path = `disk:/${file.name}${file.extension}`
-    const uploadUrl = await this.getUploadUrl(path)
+    let httpClientError: HttpClientError | undefined
 
-    await this.httpClient.put(uploadUrl, file.value, {
-      onUploadProgress: (event: HttpUploadProgressEvent) => {
-        let loadedPercent: number = 0
+    try {
+      const path = `${this.baseDiskPath}${file.name}`
+      const { href } = await this.getUploadUrl(path)
 
-        if (event.total) {
-          loadedPercent = Math.floor((event.loaded / event.total) * 100)
-        }
+      await this.httpClient.put(href, file.value, {
+        onUploadProgress: (event: HttpUploadProgressEvent) => {
+          process?.progress(
+            Math.floor((event.loaded / (event.total ?? 1)) * 100)
+          )
+        },
+      })
+    } catch (error) {
+      httpClientError = error as HttpClientError
+    }
 
-        process?.uploading(loadedPercent)
-      },
-    })
-
-    process?.uploaded()
+    process?.finish(httpClientError)
   }
 
   // 3. Загрузить файл по полученному URL

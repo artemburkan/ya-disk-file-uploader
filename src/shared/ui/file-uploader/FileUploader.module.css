@@ -33,6 +33,7 @@
     padding: 32px;
     border: 2px dashed var(--drop-area);
     border-radius: 8px;
+
     text-align: center;
     transition: border-color 0.1s;
 
@@ -46,5 +47,11 @@
     margin: 0 auto;
     margin-bottom: 8px;
     color: var(--drop-area-icon-color);
+  }
+
+  &__file {
+    & > *:not(:first-child) {
+      margin-top: 8px;
+    }
   }
 }

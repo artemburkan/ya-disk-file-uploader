@@ -1,1 +1,1 @@
-export * from './http-client/HttpClient'
+export * from './http-client'
