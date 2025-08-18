@@ -30,8 +30,8 @@ export const File = (props: Props) => {
     name = '',
     uploadStatus,
     message = '',
-    isEdit,
     progress,
+    isEdit,
     onEdit = () => {},
     onDelete = () => {},
     onUpload = () => {},
@@ -49,11 +49,10 @@ export const File = (props: Props) => {
       setEditedName('')
       onEdit(`${editedName}.${file.name.split('.')[1]}`)
     } else {
-      console.log('else edit: name: ', name)
       const nameChunks = name.split('.')
       nameChunks.pop()
       const editedName = nameChunks.join('.')
-      console.log('nameChunks: ', nameChunks)
+
       setEditedName(editedName)
       onEdit(editedName)
     }
@@ -83,7 +82,7 @@ export const File = (props: Props) => {
         })}
       >
         <div className={style['file__load']}>
-          {(uploadStatus === 'ready' || uploadStatus === 'error') && (
+          {(uploadStatus === 'ready' || uploadStatus === 'failed') && (
             <MdFileUpload
               size={32}
               className={style['file__control']}
@@ -114,7 +113,7 @@ export const File = (props: Props) => {
         </div>
         {uploadStatus !== 'uploading' && (
           <div className={style['file__controls']}>
-            {(uploadStatus === 'ready' || uploadStatus === 'error') && (
+            {(uploadStatus === 'ready' || uploadStatus === 'failed') && (
               <>
                 {!isEdit && (
                   <MdEdit
@@ -150,7 +149,7 @@ export const File = (props: Props) => {
       {Boolean(message) && (
         <div
           className={cx(style['file-message'], {
-            [style['file-message_error']]: uploadStatus === 'error',
+            [style['file-message_error']]: uploadStatus === 'failed',
           })}
         >
           {message}

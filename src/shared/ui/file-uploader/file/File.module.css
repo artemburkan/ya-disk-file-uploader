@@ -1,7 +1,6 @@
 .file {
   --error-border: var(--red-0);
 
-  height: 62px;
   display: flex;
   align-items: stretch;
 

@@ -1,4 +1,4 @@
-export class HttpClientError {
+export class HttpError {
   code: string
   message: string
   description: string

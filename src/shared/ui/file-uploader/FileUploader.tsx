@@ -7,6 +7,7 @@ import type {
   UploadFileStatus,
   UploadFileProcess,
 } from './types'
+import { generateId } from '@shared/utils/generateId'
 import style from './FileUploader.module.css'
 
 interface Props {
@@ -31,8 +32,8 @@ export const FileUploader = (props: Props) => {
 
     if (!newFiles) return
 
-    const addedFiles = Array.from(newFiles).map((file, index) => ({
-      id: files.length + index,
+    const addedFiles = Array.from(newFiles).map((file) => ({
+      id: generateId(),
       value: file,
       uploadStatus: 'ready' as UploadFileStatus,
       progress: 0,
@@ -46,20 +47,28 @@ export const FileUploader = (props: Props) => {
   }
 
   const uploadFile = (file: FileInfo) => {
-    const index = files.findIndex((_) => _.id === file.id)
-    files[index].uploadStatus = 'uploading'
-    files[index].message = ''
-    setFiles([...files])
+    setFiles((files) => {
+      const index = files.findIndex((_) => _.id === file.id)
+      files[index].uploadStatus = 'uploading'
+      files[index].message = ''
+      return [...files]
+    })
 
     onUpload(file, {
       progress: (progress: number) => {
-        files[index].progress = progress
-        setFiles([...files])
+        setFiles((files) => {
+          const index = files.findIndex((_) => _.id === file.id)
+          files[index].progress = progress
+          return [...files]
+        })
       },
       finish: (error?: FileError) => {
-        files[index].uploadStatus = error ? 'error' : 'success'
-        files[index].message = error?.message ?? ''
-        setFiles([...files])
+        setFiles((files) => {
+          const index = files.findIndex((_) => _.id === file.id)
+          files[index].uploadStatus = error ? 'failed' : 'success'
+          files[index].message = error?.message ?? ''
+          return [...files]
+        })
       },
     })
   }

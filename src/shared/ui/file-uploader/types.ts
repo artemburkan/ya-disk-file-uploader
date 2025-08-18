@@ -1,7 +1,7 @@
-export type UploadFileStatus = 'ready' | 'uploading' | 'success' | 'error'
+export type UploadFileStatus = 'ready' | 'uploading' | 'success' | 'failed'
 
 export interface FileInfo {
-  id: number
+  id: string
   value: File
   name: string
   message: string
