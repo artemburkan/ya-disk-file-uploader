@@ -77,17 +77,19 @@ export const FileUploader = (props: Props) => {
     const index = files.findIndex((_) => _.id === file.id)
     files[index].isEdit = !file.isEdit
     files[index].name = `${file.name}`
-
     setFiles([...files])
   }
 
   const deleteFile = (file: FileInfo) => {
-    const restFiles = files.filter((_) => _.id !== file.id)
-    setFiles(restFiles)
+    setFiles(files.filter((_) => _.id !== file.id))
+  }
+
+  const submit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
   }
 
   return (
-    <form ref={formRef} className={style['file-uploader']}>
+    <form ref={formRef} className={style['file-uploader']} onSubmit={submit}>
       <div className={style['file-uploader__drop-area']} onClick={click}>
         <input
           ref={inputRef}

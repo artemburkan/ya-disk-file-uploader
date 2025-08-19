@@ -1,13 +1,14 @@
-import { useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import {
   MdFileUpload,
   MdFileDownload,
   MdCheckCircle,
   MdEdit,
   MdCheck,
+  MdDelete,
 } from 'react-icons/md'
-import { MdDelete } from 'react-icons/md'
 import cx from 'clsx'
+import { formatFileSize } from '@shared/utils/formatFileSize'
 import type { UploadFileStatus } from '../types'
 import style from './File.module.css'
 
@@ -38,23 +39,25 @@ export const File = (props: Props) => {
     onDownload = () => {},
   } = props
 
+  const fileNameEl = useRef<HTMLInputElement>(null)
   const [editedName, setEditedName] = useState('')
 
   const formatedName =
     name.length > 32 ? `${name.slice(0, 32)}...${name.slice(-8)}` : `${name}`
-  const size = `${(file.size / (1024 * 1024)).toFixed(2)} MB`
+
+  const size = formatFileSize(file.size)
 
   const editFile = () => {
-    if (editedName) {
-      setEditedName('')
-      onEdit(`${editedName}.${file.name.split('.')[1]}`)
-    } else {
-      const nameChunks = name.split('.')
-      nameChunks.pop()
-      const editedName = nameChunks.join('.')
+    if (!isEdit) {
+      onEdit(name)
 
+      const nameChunks = name.split('.').slice(0)
+      const editedName = nameChunks.slice(0, nameChunks.length - 1).join('.')
       setEditedName(editedName)
-      onEdit(editedName)
+    } else if (!editedName) {
+      onEdit(name)
+    } else {
+      onEdit(`${editedName}.${file.name.split('.')[1]}`)
     }
   }
 
@@ -64,6 +67,10 @@ export const File = (props: Props) => {
 
   const uploadFile = () => {
     if (!file) return
+    if (isEdit) {
+      fileNameEl.current?.focus()
+      return
+    }
 
     onUpload(file)
   }
@@ -72,7 +79,15 @@ export const File = (props: Props) => {
     onDownload()
   }
 
-  const deleteFile = () => onDelete()
+  const deleteFile = () => {
+    onDelete()
+  }
+
+  useEffect(() => {
+    if (isEdit) {
+      fileNameEl.current?.focus()
+    }
+  }, [isEdit])
 
   return (
     <div>
@@ -97,9 +112,10 @@ export const File = (props: Props) => {
         <div className={style['file__description']}>
           {isEdit && (
             <input
+              ref={fileNameEl}
               type="text"
               name="fileName"
-              defaultValue={name}
+              defaultValue={editedName}
               onChange={renameFile}
               className={style['file__input']}
             />
