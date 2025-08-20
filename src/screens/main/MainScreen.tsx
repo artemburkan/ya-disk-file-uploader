@@ -1,3 +1,5 @@
+import { useRef, useEffect } from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
 import { ScreenLayout } from '@shared/ui/screen-layout'
 import { Link } from '@shared/ui/link'
 import { YaDiskUploader } from '@features/ya-disk-uploader'
@@ -7,10 +9,18 @@ const href =
   'https://oauth.yandex.ru/authorize?response_type=token&client_id=6cea54eb5e4b4f7ea4f774051418155c'
 
 export const MainScreen = () => {
-  const token = localStorage.getItem('token')
+  const tokenEl = useRef<HTMLInputElement>(null)
+
   const change = (event: React.ChangeEvent<HTMLInputElement>) => {
     localStorage.setItem('token', event.target.value)
   }
+
+  useEffect(() => {
+    if (!tokenEl.current) return
+
+    const token = localStorage.getItem('token')
+    tokenEl.current.value = token ?? ''
+  }, [])
 
   return (
     <ScreenLayout>
@@ -25,15 +35,17 @@ export const MainScreen = () => {
           <label className={style['main-screen__label-oauth']}>
             OAuth токен:
             <input
+              ref={tokenEl}
               type="text"
               name="oauth"
-              defaultValue={token ?? ''}
               onChange={change}
               className={style['main-screen__oauth']}
             />
           </label>
         </form>
-        <YaDiskUploader />
+        <ErrorBoundary fallback={<YaDiskUploader />}>
+          <YaDiskUploader />
+        </ErrorBoundary>
       </div>
     </ScreenLayout>
   )

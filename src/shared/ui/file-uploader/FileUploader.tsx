@@ -28,11 +28,9 @@ export const FileUploader = (props: Props) => {
   }
 
   const change = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newFiles = event.target.files
+    if (!event.target.files) return
 
-    if (!newFiles) return
-
-    const addedFiles = Array.from(newFiles).map((file) => ({
+    const addedFiles = Array.from(event.target.files).map((file) => ({
       id: generateId(),
       value: file,
       uploadStatus: 'ready' as UploadFileStatus,

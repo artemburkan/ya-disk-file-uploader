@@ -12,13 +12,5 @@ export const YaDiskUploader = () => {
     yaDiskUploadService.uploadFile(file, process)
   }, [])
 
-  const download = useCallback(() => {}, [])
-
-  return (
-    <FileUploaderWithMemo
-      description={description}
-      onUpload={upload}
-      onDownload={download}
-    />
-  )
+  return <FileUploaderWithMemo description={description} onUpload={upload} />
 }

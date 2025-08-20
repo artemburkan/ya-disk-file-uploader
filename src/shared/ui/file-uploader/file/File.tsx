@@ -67,6 +67,7 @@ export const File = (props: Props) => {
 
   const uploadFile = () => {
     if (!file) return
+
     if (isEdit) {
       fileNameEl.current?.focus()
       return
@@ -76,7 +77,14 @@ export const File = (props: Props) => {
   }
 
   const downloadFile = () => {
-    onDownload()
+    const url = URL.createObjectURL(file)
+
+    const a = document.createElement('a')
+    a.href = url
+    a.download = name
+    a.click()
+
+    URL.revokeObjectURL(url)
   }
 
   const deleteFile = () => {
