@@ -4,24 +4,21 @@ import type { UrlUploadResponse } from './types'
 
 export class YandexDiskService {
   private _http: HttpClient
-  private _authToken: string
 
-  constructor(http: HttpClient, authToken: string) {
+  constructor(http: HttpClient) {
     this._http = http
-    this._authToken = authToken
   }
 
   get http() {
     return this._http
   }
 
-  private get authToken() {
-    return this._authToken
-  }
-
-  async getUploadUrl(path: string): Promise<UrlUploadResponse> {
+  async getUploadUrl(
+    path: string,
+    authToken: string
+  ): Promise<UrlUploadResponse> {
     const config = {
-      headers: { Authorization: `OAuth ${this.authToken}` },
+      headers: { Authorization: `OAuth ${authToken}` },
       params: { path, overwrite: true },
     }
 

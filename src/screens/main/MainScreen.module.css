@@ -17,10 +17,13 @@
   }
 
   &__oauth {
-    width: 100%;
+    width: 150px;
     padding: 4px 8px;
     border: 1px solid var(--grey-1);
     border-radius: 8px;
+    margin-top: 4px;
+    margin-bottom: 16px;
+    margin-left: 8px;
     background: var(--grey-7);
     color: var(--drop-area-icon-color);
     font-size: 16px;
@@ -31,7 +34,5 @@
     &:focus {
       border-color: white;
     }
-    margin-top: 4px;
-    margin-bottom: 16px;
   }
 }

@@ -22,7 +22,6 @@ interface Props {
   onEdit?: (name: string) => void
   onDelete?: () => void
   onUpload?: (file: File) => void
-  onDownload?: () => void
 }
 
 export const File = (props: Props) => {
@@ -36,7 +35,6 @@ export const File = (props: Props) => {
     onEdit = () => {},
     onDelete = () => {},
     onUpload = () => {},
-    onDownload = () => {},
   } = props
 
   const fileNameEl = useRef<HTMLInputElement>(null)

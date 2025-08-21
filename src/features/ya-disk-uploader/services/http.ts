@@ -1,7 +1,7 @@
 import { HttpClient } from '@shared/libs'
 
 const config = {
-  baseURL: 'https://cloud-api.yandex.net/v1/disk',
+  baseURL: process.env.VITE_YANDEX_DISK_API,
   timeout: 300000,
   headers: {
     'Content-Type': 'application/json',

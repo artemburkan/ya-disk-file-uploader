@@ -9,15 +9,18 @@ class YaDiskUploadService {
   yaDiskService: YandexDiskService
 
   constructor() {
-    const authToken = localStorage.getItem('token') ?? ''
-    this.yaDiskService = new YandexDiskService(http, authToken)
+    this.yaDiskService = new YandexDiskService(http)
   }
 
   async uploadFile(file: FileInfo, process?: UploadFileProcess) {
     let httpError: HttpError | undefined
+    const authToken = localStorage.getItem('token') ?? ''
 
     try {
-      const { href } = await this.yaDiskService.getUploadUrl(file.name)
+      const { href } = await this.yaDiskService.getUploadUrl(
+        file.name,
+        authToken
+      )
 
       const progress = (event: HttpProgressEvent) => {
         const progress = calcLoadProgress(event.loaded, event.total ?? 1)

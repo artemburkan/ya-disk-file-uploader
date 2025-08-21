@@ -1,12 +1,10 @@
 import { useRef, useEffect } from 'react'
-import { ErrorBoundary } from 'react-error-boundary'
 import { ScreenLayout } from '@shared/ui/screen-layout'
 import { Link } from '@shared/ui/link'
 import { YaDiskUploader } from '@features/ya-disk-uploader'
 import style from './MainScreen.module.css'
 
-const href =
-  'https://oauth.yandex.ru/authorize?response_type=token&client_id=6cea54eb5e4b4f7ea4f774051418155c'
+const href = process.env.VITE_YANDEX_DISK_AUTH_API
 
 export const MainScreen = () => {
   const tokenEl = useRef<HTMLInputElement>(null)
@@ -43,9 +41,7 @@ export const MainScreen = () => {
             />
           </label>
         </form>
-        <ErrorBoundary fallback={<YaDiskUploader />}>
-          <YaDiskUploader />
-        </ErrorBoundary>
+        <YaDiskUploader />
       </div>
     </ScreenLayout>
   )
