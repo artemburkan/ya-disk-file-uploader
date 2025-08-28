@@ -1,26 +1,17 @@
 import crypto from 'crypto'
 
-export const generateScopedName = (
-  name: string,
-  // filename: string,
-  css: string
-) => {
-  // const componentName = filename
-  //   .replace(/\.\w+$/, '')
-  //   .split('/')
-  //   .pop()
-  //   ?.replace('.module', '')
-  //   ?.toLowerCase()
+export const generateScopedName =
+  (mode: string) => (name: string, filename: string) => {
+    const hash = crypto
+      .createHash('sha1')
+      .update(filename + name)
+      .digest('base64')
+      .replace(/[^a-zA-Z0-9]/g, '')
+      .slice(0, 6)
 
-  // Generate hash
-  // const hash = crypto
-  //   .createHash('md5')
-  //   .update(css)
-  //   .digest('base64')
-  //   .substring(0, 5)
+    if (mode === 'development') {
+      return `${name}_${hash}`
+    }
 
-  const hash = crypto.createHash('sha256').update(css).digest('hex').slice(0, 5)
-
-  // return `${componentName}__${name}_${hash}`
-  return `${name}_${hash}`
-}
+    return `_${hash}`
+  }

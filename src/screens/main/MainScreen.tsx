@@ -1,6 +1,8 @@
 import { useRef, useEffect } from 'react'
+import { toast } from 'react-toastify'
 import { ScreenLayout } from '@shared/ui/screen-layout'
 import { Link } from '@shared/ui/link'
+import { SystemEmitter } from '@shared/system/emitters'
 import { YaDiskUploader } from '@features/ya-disk-uploader'
 import style from './MainScreen.module.css'
 
@@ -18,6 +20,22 @@ export const MainScreen = () => {
 
     const token = localStorage.getItem('token')
     tokenEl.current.value = token ?? ''
+  }, [])
+
+  useEffect(() => {
+    const unsubscribe = SystemEmitter.http.on('error', (error) => {
+      error.data.forEach((data) => {
+        toast.error((
+          <div style={{fontSize: '16px'}}>
+            {data?.message}
+          </div>
+        ))
+      })
+    })
+
+    return () => {
+      unsubscribe()
+    }
   }, [])
 
   return (
