@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
         // or 'camelCaseOnly',
         localsConvention: 'camelCase',
         // Use CSS Modules by default, even without `.module.css`
-        generateScopedName,
+        generateScopedName: generateScopedName(mode),
       },
     },
     define: {

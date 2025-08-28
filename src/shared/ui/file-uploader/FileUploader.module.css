@@ -30,7 +30,7 @@
 
   &__drop-area {
     cursor: pointer;
-    padding: 32px;
+    padding: 48px;
     border: 2px dashed var(--drop-area);
     border-radius: 8px;
 

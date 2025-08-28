@@ -1,4 +1,5 @@
 import { HttpClient } from '@shared/libs'
+import { SystemEmitter } from '@shared/system/emitters'
 
 const config = {
   baseURL: process.env.VITE_YANDEX_DISK_API,
@@ -8,4 +9,4 @@ const config = {
   },
 }
 
-export const http = new HttpClient(config)
+export const http = new HttpClient(SystemEmitter.http, config)

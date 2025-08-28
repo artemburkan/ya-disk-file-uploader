@@ -1,47 +1,62 @@
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
-import type { HttpConfig } from './types'
+import { shouldHttpErrorEmit, type HttpEmitter } from '@shared/system/emitters'
+import type { HttpConfig, HttpResponse } from './types'
 import { HttpError } from './HttpError'
 
 export class HttpClient {
-  private _request: AxiosInstance
+  private readonly agent: AxiosInstance
+  private readonly emitter: HttpEmitter
 
-  constructor(config?: HttpConfig) {
-    this._request = axios.create(config)
-  }
-
-  get request() {
-    return this._request
+  constructor(emitter: HttpEmitter, config?: HttpConfig) {
+    this.emitter = emitter
+    this.agent = axios.create(config)
   }
 
   get config() {
-    return this.request.defaults
+    return this.agent.defaults
   }
 
-  private throwError(error: unknown): never {
-    const httpError = new HttpError()
+  private createError(error: unknown) {
+    let status: number | undefined
+    let statusText: string | undefined
+    let name = 'UnknownError'
+    let message = 'Неизвестная ошибка'
+    let description = 'Unknown error'
 
     if (axios.isAxiosError(error)) {
-      httpError.code = error.code ?? ''
-      httpError.name = error.response?.data?.error
-      httpError.message = error.response?.data?.message
-      httpError.description = error.response?.data?.description
-    } else {
-      httpError.code = 'UNKNOWN_ERROR'
-      httpError.name = 'UnknownError'
-      httpError.message = 'Неизвестная ошибка'
-      httpError.description = 'Unknown error'
+      status = error.response?.status
+      statusText = error.response?.statusText
+      name = error.response?.data?.error ?? error.code ?? ''
+      message = error.response?.data?.message ?? error.message
+      description = error.response?.data?.description ?? ''
     }
 
-    throw httpError
+    let httpError = new HttpError({
+      status,
+      statusText,
+      name,
+      message,
+      description,
+    })
+
+    httpError.log()
+
+    if (!httpError.status || shouldHttpErrorEmit(httpError.status)) {
+      this.emitter.emit('error', httpError)
+      httpError = new HttpError({ status, statusText })
+      return httpError
+    }
+
+    return httpError
   }
 
-  async get<T = unknown>(url: string, config?: HttpConfig): Promise<T> {
+  async get<T = unknown>(url: string, config?: HttpConfig): HttpResponse<T> {
     try {
-      const response = await this.request.get<T>(url, config)
-      return response.data
+      const response = await this.agent.get<T>(url, config)
+      return { data: response.data, error: null }
     } catch (error) {
-      this.throwError(error)
+      return { data: null, error: this.createError(error) }
     }
   }
 
@@ -49,12 +64,12 @@ export class HttpClient {
     url: string,
     data?: unknown,
     config?: HttpConfig
-  ): Promise<T> {
+  ): HttpResponse<T> {
     try {
-      const response = await this.request.post<T>(url, data, config)
-      return response.data
+      const response = await this.agent.post<T>(url, data, config)
+      return { data: response.data, error: null }
     } catch (error) {
-      this.throwError(error)
+      return { data: null, error: this.createError(error) }
     }
   }
 
@@ -62,21 +77,21 @@ export class HttpClient {
     url: string,
     data?: unknown,
     config?: HttpConfig
-  ): Promise<T> {
+  ): HttpResponse<T> {
     try {
-      const response = await this.request.put<T>(url, data, config)
-      return response.data
+      const response = await this.agent.put<T>(url, data, config)
+      return { data: response.data, error: null }
     } catch (error) {
-      this.throwError(error)
+      return { data: null, error: this.createError(error) }
     }
   }
 
-  async delete<T = unknown>(url: string, config?: HttpConfig): Promise<T> {
+  async delete<T = unknown>(url: string, config?: HttpConfig): HttpResponse<T> {
     try {
-      const response = await this.request.delete<T>(url, config)
-      return response.data
+      const response = await this.agent.delete<T>(url, config)
+      return { data: response.data, error: null }
     } catch (error) {
-      this.throwError(error)
+      return { data: null, error: this.createError(error) }
     }
   }
 }

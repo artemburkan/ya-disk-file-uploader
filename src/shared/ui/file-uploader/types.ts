@@ -10,11 +10,13 @@ export interface FileInfo {
   progress: number
 }
 
-export interface FileError {
-  message: string
+export interface ProcessInfo {
+  status?: UploadFileStatus
+  message?: string
+  progress?: number
 }
 
 export interface UploadFileProcess {
   progress: (process: number) => void
-  finish: (error?: FileError) => void
+  finish: (process?: ProcessInfo) => void
 }

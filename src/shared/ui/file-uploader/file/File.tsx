@@ -28,7 +28,7 @@ export const File = (props: Props) => {
   const {
     value: file,
     name = '',
-    uploadStatus,
+    uploadStatus = 'ready',
     message = '',
     progress,
     isEdit,
@@ -159,11 +159,18 @@ export const File = (props: Props) => {
               </>
             )}
             {uploadStatus === 'success' && (
-              <MdFileDownload
-                size={26}
-                className={style['file__control']}
-                onClick={downloadFile}
-              />
+              <>
+                <MdFileDownload
+                  size={26}
+                  className={style['file__control']}
+                  onClick={downloadFile}
+                />
+                <MdDelete
+                  size={24}
+                  className={style['file__control']}
+                  onClick={deleteFile}
+                />
+              </>
             )}
           </div>
         )}

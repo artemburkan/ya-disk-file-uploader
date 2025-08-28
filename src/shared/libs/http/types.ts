@@ -1,11 +1,12 @@
-import type {
-  AxiosRequestConfig,
-  AxiosResponse,
-  Method,
-  AxiosProgressEvent,
-} from 'axios'
+import type { AxiosRequestConfig, Method, AxiosProgressEvent } from 'axios'
+import { HttpError } from './HttpError'
 
 export type HttpConfig = AxiosRequestConfig
+
 export type HttpMethod = Method
-export type HttpResponse<T = unknown, D = unknown> = AxiosResponse<T, D>
+
 export type HttpProgressEvent = AxiosProgressEvent
+
+type Response<T> = { data: T; error: null } | { data: null; error: HttpError }
+
+export type HttpResponse<T> = Promise<Response<T>>

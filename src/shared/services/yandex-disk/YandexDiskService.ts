@@ -1,28 +1,27 @@
 import { HttpClient } from '@shared/libs/http'
-import type { HttpProgressEvent } from '@shared/libs/http'
+import type { HttpProgressEvent, HttpResponse } from '@shared/libs/http'
 import type { UrlUploadResponse } from './types'
 
 export class YandexDiskService {
-  private _http: HttpClient
+  static CONFLICT_STATUS = 409
+
+  private readonly http: HttpClient
 
   constructor(http: HttpClient) {
-    this._http = http
-  }
-
-  get http() {
-    return this._http
+    this.http = http
   }
 
   async getUploadUrl(
     path: string,
-    authToken: string
-  ): Promise<UrlUploadResponse> {
-    const config = {
-      headers: { Authorization: `OAuth ${authToken}` },
-      params: { path, overwrite: true },
-    }
+    options: { authToken: string; overwrite?: boolean; fields?: string }
+  ): HttpResponse<UrlUploadResponse> {
+    const headers = { Authorization: `OAuth ${options.authToken}` }
+    const params = { path, ...options }
 
-    return await this.http.get<UrlUploadResponse>('/resources/upload', config)
+    return await this.http.get<UrlUploadResponse>('/resources/upload', {
+      headers,
+      params,
+    })
   }
 
   async uploadFile(
