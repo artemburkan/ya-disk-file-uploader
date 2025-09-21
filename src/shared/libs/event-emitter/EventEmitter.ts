@@ -1,7 +1,7 @@
-import type { EventRecords, Listener } from './types'
+import type {EventRecords, Listener} from "./types"
 
 export class EventEmitter<Events extends EventRecords> {
-  private listeners: { [K in keyof Events]?: Set<Listener<Events[K]>> } = {}
+  private listeners: {[K in keyof Events]?: Set<Listener<Events[K]>>} = {}
 
   on<E extends keyof Events>(event: E, listener: Listener<Events[E]>) {
     const set = this.listeners[event] ?? new Set<Listener<Events[E]>>()

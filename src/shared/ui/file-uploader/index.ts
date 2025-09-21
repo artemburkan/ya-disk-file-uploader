@@ -1,2 +1,2 @@
-export { FileUploader } from './FileUploader'
-export type * from './types'
+export {FileUploader} from "./FileUploader"
+export type * from "./types"
