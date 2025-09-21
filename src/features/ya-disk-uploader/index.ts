@@ -1,1 +1,1 @@
-export { YaDiskUploader } from './YaDiskUploader'
+export {YaDiskUploader} from "./YaDiskUploader"

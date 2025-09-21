@@ -1,3 +1,3 @@
-export * from './types'
-export * from './HttpClient'
-export * from './HttpError'
+export * from "./types"
+export * from "./AxiosHttpClient"
+export * from "./HttpError"

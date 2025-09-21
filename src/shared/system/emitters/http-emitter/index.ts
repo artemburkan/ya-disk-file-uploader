@@ -1,3 +1,2 @@
-export * from './types'
-export * from './utils'
-export { httpEmitter } from './HttpEmitter'
+export * from "./types"
+export {httpEmitter} from "./HttpEmitter"

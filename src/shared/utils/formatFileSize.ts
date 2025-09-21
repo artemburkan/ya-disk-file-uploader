@@ -1,5 +1,5 @@
 export const formatFileSize = (bytes: number) => {
-  const units = ['B', 'KB', 'MB', 'GB', 'TB']
+  const units = ["B", "KB", "MB", "GB", "TB"]
   let i = 0
 
   for (i; bytes >= 1024 && i < units.length - 1; i++) {

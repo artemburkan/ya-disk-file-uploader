@@ -1,8 +1,8 @@
-import type { HttpMethod } from '@shared/libs'
+import type {Method} from "@shared/libs"
 
 export interface UploadingResponse {
   operation_id: string
   href: string
-  method: HttpMethod
+  method: Method
   templated: boolean
 }
