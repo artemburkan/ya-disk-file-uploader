@@ -1,34 +1,34 @@
-import { defineConfig, loadEnv } from 'vite'
-import path from 'path'
-import react from '@vitejs/plugin-react'
-import { generateScopedName } from './config-utils/generateScopedName'
+import path from "path"
+
+import {defineConfig, loadEnv} from "vite"
+import react from "@vitejs/plugin-react"
+
+import {eslintPlugin} from "./config-utils/eslint-plugin"
+import {generateUniqueName} from "./config-utils/generateUniqueName"
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({mode}) => {
   const env = loadEnv(mode, process.cwd())
+  const isDev = mode === "development"
+
+  const eslint = () => eslintPlugin({fix: true, configFile: "eslint.config.js"})
+  const generateScopedName = generateUniqueName(isDev)
 
   return {
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
-        '@app': path.resolve(__dirname, './src/app'),
-        '@screens': path.resolve(__dirname, './src/screens'),
-        '@widgets': path.resolve(__dirname, './src/widgets'),
-        '@features': path.resolve(__dirname, './src/features'),
-        '@shared': path.resolve(__dirname, './src/shared'),
+        "@": path.resolve(__dirname, "./src"),
+        "@app": path.resolve(__dirname, "./src/app"),
+        "@screens": path.resolve(__dirname, "./src/screens"),
+        "@widgets": path.resolve(__dirname, "./src/widgets"),
+        "@features": path.resolve(__dirname, "./src/features"),
+        "@shared": path.resolve(__dirname, "./src/shared"),
       },
     },
-    plugins: [react()],
+    plugins: [react(), eslint()],
     css: {
-      modules: {
-        // or 'camelCaseOnly',
-        localsConvention: 'camelCase',
-        // Use CSS Modules by default, even without `.module.css`
-        generateScopedName: generateScopedName(mode),
-      },
+      modules: {generateScopedName},
     },
-    define: {
-      'process.env': env,
-    },
+    define: {"process.env": env},
   }
 })

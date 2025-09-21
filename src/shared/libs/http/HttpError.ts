@@ -18,19 +18,13 @@ export class HttpError {
   data: ErrorData[] = []
 
   constructor(options: Options = {}) {
-    const {
-      status,
-      statusText,
-      name = '',
-      message = '',
-      description = '',
-    } = options
+    const {status, statusText, name = "", message = "", description = ""} = options
     this.status = status
     this.statusText = statusText
-    this.data.push({ name, message, description })
+    this.data.push({name, message, description})
   }
 
-  log(message = '') {
+  log(message = "") {
     console.error(`Error: ${this.statusText ?? message} \n`, this.data)
   }
 }

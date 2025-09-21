@@ -1,1 +1,1 @@
-export { YandexDiskService } from './YandexDiskService'
+export {YandexDiskService} from "./YandexDiskService"
