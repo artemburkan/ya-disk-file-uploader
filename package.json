@@ -8,9 +8,15 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "tsc": "tsc -b",
-    "tsc:w": "tsc -b -w"
+    "lint:fix": "eslint . --fix --color",
+    "tsc": "tsc -b --pretty",
+    "tsc:w": "tsc -b -w",
+    "prepare": "husky init"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "dependencies": {
     "axios": "^1.11.0",
@@ -43,16 +49,5 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
     "vite": "^7.0.4"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.{js, jsx, ts, tsx}": [
-      "npm run lint:fix",
-      "npm run tsc"
-    ]
   }
 }
