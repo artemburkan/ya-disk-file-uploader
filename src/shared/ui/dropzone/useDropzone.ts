@@ -1,13 +1,14 @@
 import {useCallback, useState} from "react"
-import {generateId} from "@shared/utils/generateId"
+import {nanoid} from "nanoid"
 import type {FileInfo, UploadFileStatus} from "./types"
 
-export const useFileUploader = () => {
+export const useDropzone = () => {
   const [files, setFiles] = useState<FileInfo[]>([])
+  const [isOverArea, setIsOverArea] = useState(false)
 
   const addFiles = useCallback((files: File[]) => {
     const addedFiles = files.map((file) => ({
-      id: generateId(),
+      id: nanoid(),
       data: file,
       uploadStatus: "failed" as UploadFileStatus,
       progress: 0,
@@ -15,7 +16,6 @@ export const useFileUploader = () => {
       message: "",
       isEdit: false,
     }))
-
     setFiles((files) => [...files, ...addedFiles])
   }, [])
 
@@ -35,5 +35,13 @@ export const useFileUploader = () => {
     setFiles((files) => files.filter((item) => item.id !== file.id))
   }, [])
 
-  return {files, addFiles, updateFile, deleteFile}
+  return {
+    files,
+    isOverArea,
+    setFiles,
+    setIsOverArea,
+    addFiles,
+    updateFile,
+    deleteFile,
+  }
 }

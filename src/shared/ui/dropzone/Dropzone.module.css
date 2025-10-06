@@ -1,4 +1,4 @@
-.file-uploader {
+.dropzone {
   --file-uploader-border: var(--grey-1);
   --file-uploader-background: var(--black-1);
   --file-uploader-hover: var(--grey-2);
@@ -17,7 +17,7 @@
   color: white;
   user-select: none;
 
-  & > *:not(:first-child) {
+  &>*:not(:first-child) {
     margin-top: 16px;
   }
 
@@ -28,7 +28,7 @@
     font-weight: 700;
   }
 
-  &__drop-area {
+  &__area {
     cursor: pointer;
     padding: 48px;
     border: 2px dashed var(--drop-area);
@@ -40,6 +40,10 @@
     &:hover {
       border: 2px dashed white;
     }
+
+    &_bordered {
+      border: 2px dashed white;
+    }
   }
 
   &__icon {
@@ -47,10 +51,12 @@
     margin: 0 auto;
     margin-bottom: 8px;
     color: var(--drop-area-icon-color);
+    pointer-events: none;
+    user-select: none;
   }
 
   &__file {
-    & > *:not(:first-child) {
+    &>*:not(:first-child) {
       margin-top: 8px;
     }
   }

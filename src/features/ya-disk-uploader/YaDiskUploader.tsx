@@ -1,18 +1,20 @@
 import {useCallback, useRef, memo} from "react"
-import {FileUploader} from "@shared/ui/file-uploader"
-import type {FileInfo, UploadFileProcess} from "@shared/ui/file-uploader"
+import {Dropzone} from "@shared/ui/dropzone"
+import type {FileInfo, UploadFileProcess} from "@shared/ui/dropzone"
 import {YaDiskUploadService} from "./services/YaDiskUploadService"
 
-const description = "Выберите для загрузки на Яндекс.Диск"
-
-const FileUploaderWithMemo = memo(FileUploader)
+const DropzoneWithMemo = memo(Dropzone)
 
 export const YaDiskUploader = () => {
   const yaDiskUploderRef = useRef(new YaDiskUploadService())
+  const descriptionRef = useRef({
+    initial: "Выберите для отображения списка загрузки файлов на Яндекс.Диск",
+    over: "Отпустите для отображения списка файлов",
+  })
 
-  const upload = useCallback((file: FileInfo, process?: UploadFileProcess) => {
+  const upload = useCallback((file: FileInfo, process: UploadFileProcess) => {
     yaDiskUploderRef.current.uploadFile(file, process)
   }, [])
 
-  return <FileUploaderWithMemo description={description} onUpload={upload} />
+  return <DropzoneWithMemo description={descriptionRef.current} onUpload={upload} />
 }

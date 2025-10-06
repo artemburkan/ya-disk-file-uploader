@@ -18,5 +18,5 @@ export interface ProcessInfo {
 
 export interface UploadFileProcess {
   progress: (process: number) => void
-  finish: (process?: ProcessInfo) => void
+  finish: (process: ProcessInfo) => void
 }

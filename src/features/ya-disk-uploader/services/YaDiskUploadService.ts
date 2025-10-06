@@ -1,4 +1,4 @@
-import type {FileInfo, UploadFileProcess} from "@shared/ui/file-uploader"
+import type {FileInfo, UploadFileProcess} from "@shared/ui/dropzone"
 import type {AxiosProgressEvent} from "@shared/libs/http"
 import {YandexDiskApi} from "@shared/api"
 import {calcLoadProgress} from "@/shared/utils/calcLoadProgress"
@@ -9,7 +9,7 @@ export class YaDiskUploadService {
   yaDisk = new YandexDiskApi()
   updatedFiles = new Map<string, FileInfo>()
 
-  async uploadFile(file: FileInfo, process?: UploadFileProcess) {
+  async uploadFile(file: FileInfo, process: UploadFileProcess) {
     const authToken = localStorage.getItem("token") ?? ""
     const overwrite = this.updatedFiles.has(file.id)
 
@@ -27,7 +27,7 @@ export class YaDiskUploadService {
         message = MESSAGE
       }
 
-      process?.finish({status: "failed", message})
+      process.finish({status: "failed", message})
 
       return
     }
@@ -39,7 +39,7 @@ export class YaDiskUploadService {
     const progress = (event: AxiosProgressEvent) => {
       if (event.progress !== 1) {
         const percentages = calcLoadProgress(event.loaded, event.total ?? 1)
-        process?.progress(percentages)
+        process.progress(percentages)
       }
     }
 
@@ -51,6 +51,6 @@ export class YaDiskUploadService {
       return
     }
 
-    process?.finish({status: "success"})
+    process.finish({status: "success"})
   }
 }
